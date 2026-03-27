@@ -1,0 +1,102 @@
+body {
+    font-family: Arial;
+    margin: 0;
+    background: #f4f6f8;
+}
+
+header {
+    background: linear-gradient(45deg, #2c3e50, #34495e);
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+nav {
+    background: #333;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    margin: 10px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.search {
+    text-align: center;
+    padding: 15px;
+}
+
+.search input {
+    padding: 10px;
+    width: 250px;
+}
+
+/* Form */
+.container {
+    text-align: center;
+    padding: 20px;
+}
+
+.container input,
+.container textarea {
+    display: block;
+    width: 260px;
+    margin: 10px auto;
+    padding: 10px;
+}
+
+.container button {
+    padding: 10px 20px;
+    background: green;
+    color: white;
+    border: none;
+}
+
+/* Cards */
+#house-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card {
+    background: white;
+    width: 260px;
+    margin: 15px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+
+.card button {
+    margin: 5px;
+    padding: 6px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background: orange;
+    color: white;
+}
+
+.delete-btn {
+    background: red;
+    color: white;
+}
+
+footer {
+    text-align: center;
+    background: #2c3e50;
+    color: white;
+    padding: 10px;
+}

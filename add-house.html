@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>House Rental CRUD</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>🏠 House Rental System</h1>
+    <p>Create • Update • Delete Houses</p>
+</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="add-house.html">Add House</a>
+    <a href="add-bhk.html">BHK Filter</a>
+</nav>
+
+<section class="container">
+
+    <h2 id="form-title">Add New House</h2>
+
+    <input type="hidden" id="houseId">
+
+    <input type="text" id="title" placeholder="House Title">
+    <input type="text" id="location" placeholder="Location">
+    <input type="number" id="price" placeholder="Price">
+    <textarea id="description" placeholder="Description"></textarea>
+
+    <button onclick="saveHouse()">Save House</button>
+
+</section>
+
+<section class="list-section">
+    <h2>Available Houses</h2>
+    <div id="house-list"></div>
+</section>
+
+<footer>
+    <p>📞 Contact: rent@homes.com | +91 9876543210</p>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>

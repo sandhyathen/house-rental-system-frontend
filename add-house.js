@@ -34,7 +34,7 @@ function showHouses(houses) {
 
 // Save (Create or Update)
 function saveHouse() {
-    const id = document.getElementById("houseId").value;
+    const bhk = document.getElementById("bhk").value;
 
     const data = {
         title: title.value,

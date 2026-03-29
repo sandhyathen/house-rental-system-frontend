@@ -1,4 +1,4 @@
-const API = "http://localhost:3000";
+const API = "https://house-rental-system-backend.onrender.com";
 
 const list = document.getElementById("house-list");
 const filter = document.getElementById("bhkFilter");

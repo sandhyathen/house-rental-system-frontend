@@ -1,70 +1,178 @@
+/* General Body Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    background: #f5f7fa;
+    background: #f4f6f8;
+    color: #333;
 }
 
+/* Header & Navigation */
 header {
-    background: #2c3e50;
+    background: linear-gradient(45deg, #2c3e50, #34495e);
     color: white;
     text-align: center;
-    padding: 20px;
+    padding: 30px 10px;
 }
 
-.container {
+nav {
+    background: #333;
+    padding: 15px;
     text-align: center;
-    padding: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
+nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #3498db;
+}
+
+/* Form Container */
+.container {
+    max-width: 500px;
+    margin: 30px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.container h2 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+/* Input Fields */
 .container input,
 .container textarea {
     display: block;
-    width: 260px;
-    margin: 10px auto;
-    padding: 10px;
+    width: 100%; /* Spans full width of container */
+    box-sizing: border-box; /* Prevents padding from breaking width */
+    margin: 15px 0;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
 }
 
+.container textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+/* Buttons */
 .container button {
-    padding: 10px 20px;
-    background: green;
-    color: white;
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
     border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
 }
 
+#saveBtn {
+    background: #27ae60;
+    color: white;
+}
+
+#saveBtn:hover {
+    background: #219150;
+}
+
+#cancelBtn {
+    background: #95a5a6;
+    color: white;
+}
+
+#cancelBtn:hover {
+    background: #7f8c8d;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* House List Section */
 .list-section {
+    padding: 40px 20px;
     text-align: center;
-    padding: 20px;
 }
 
 #house-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
 }
 
+/* Cards */
 .card {
     background: white;
-    width: 250px;
-    padding: 15px;
-    margin: 10px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 300px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: 0.3s;
+    text-align: left;
+    border-top: 5px solid #3498db;
 }
 
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+}
+
+.card p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Action Buttons in Cards */
 .card button {
-    margin: 5px;
-    padding: 6px 10px;
+    margin-top: 15px;
+    padding: 8px 15px;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 13px;
 }
 
 .edit-btn {
-    background: orange;
+    background: #f39c12;
     color: white;
+    margin-right: 10px;
 }
 
 .delete-btn {
-    background: red;
+    background: #e74c3c;
     color: white;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+    margin-top: 40px;
 }

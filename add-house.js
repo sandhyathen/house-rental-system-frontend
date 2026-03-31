@@ -1,30 +1,38 @@
 const API = "https://house-rental-system-backend.onrender.com";
 const list = document.getElementById("house-list");
-const houseForm = document.getElementById("house-form"); // Ensure your <form> has this ID
 
-/**
- * Save or Update House
- * @param {Event} e - The form submission event
- */
-async function saveHouse(e) {
-    if (e) e.preventDefault(); // Prevents page reload
+// 1. LOAD HOUSES
+async function loadHouses() {
+    try {
+        const res = await fetch(`${API}/houses`);
+        const data = await res.json();
+        displayHouses(data);
+    } catch (err) {
+        console.error("Failed to load houses:", err);
+    }
+}
 
+// 2. SAVE OR UPDATE
+async function saveHouse() {
     const id = document.getElementById("houseId").value;
-    
-    // Gather data and ensure numbers are treated as numbers
+    const saveBtn = document.getElementById("saveBtn");
+
     const house = {
-        title: document.getElementById("title").value.trim(),
-        location: document.getElementById("location").value.trim(),
-        price: Number(document.getElementById("price").value),
-        bhk: document.getElementById("bhk").value.trim(),
-        description: document.getElementById("description").value.trim(),
+        title: document.getElementById("title").value,
+        location: document.getElementById("location").value,
+        price: document.getElementById("price").value,
+        bhk: document.getElementById("bhk").value,
+        description: document.getElementById("description").value,
     };
 
-    // Simple validation: don't send empty data
-    if (!house.title || !house.price) {
-        alert("Please fill in at least the Title and Price.");
+    // Simple Validation
+    if (!house.title || !house.price || !house.bhk) {
+        alert("Please fill in Title, Price, and BHK");
         return;
     }
+
+    saveBtn.innerText = "Processing...";
+    saveBtn.disabled = true;
 
     const url = id ? `${API}/update-house/${id}` : `${API}/add-house`;
     const method = id ? "PUT" : "POST";
@@ -36,58 +44,48 @@ async function saveHouse(e) {
             body: JSON.stringify(house)
         });
 
-        if (!response.ok) throw new Error("Network response was not ok");
-
-        alert(id ? "✅ House Updated!" : "✅ House Added!");
-        resetForm();
-        loadHouses();
-    } catch (error) {
-        console.error("Error saving house:", error);
-        alert("❌ Failed to save. Check console for details.");
-    }
-}
-
-/**
- * Load all houses from API
- */
-async function loadHouses() {
-    try {
-        const res = await fetch(`${API}/houses`);
-        const data = await res.json();
-        displayHouses(data);
+        if (response.ok) {
+            alert(id ? "House Updated Successfully!" : "House Added Successfully!");
+            resetForm();
+            loadHouses();
+        } else {
+            alert("Server error. Check backend logs.");
+        }
     } catch (err) {
-        console.error("Error loading houses:", err);
+        console.error("Save error:", err);
+        alert("Could not connect to server.");
+    } finally {
+        saveBtn.innerText = "Save House";
+        saveBtn.disabled = false;
     }
 }
 
-/**
- * Render houses to the DOM
- */
+// 3. DISPLAY HOUSES
 function displayHouses(houses) {
-    if (!list) return;
     list.innerHTML = "";
+    if (houses.length === 0) {
+        list.innerHTML = "<p>No houses found.</p>";
+        return;
+    }
 
     houses.forEach(h => {
-        // Use data attributes to make editing cleaner and safer
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
+        list.innerHTML += `
+        <div class="card">
             <h3>${h.title}</h3>
-            <p><strong>Location:</strong> ${h.location}</p>
-            <p><strong>Price:</strong> ₹${h.price}</p>
-            <p><strong>BHK:</strong> ${h.bhk}</p>
-            <div class="actions">
-                <button onclick="editHouse('${h._id}', '${h.title}', '${h.location}', '${h.price}', '${h.bhk}', '${h.description}')">Edit</button>
-                <button class="delete-btn" onclick="deleteHouse('${h._id}')">Delete</button>
+            <p>📍 ${h.location}</p>
+            <p>💰 ₹${h.price}</p>
+            <p>🏠 ${h.bhk}</p>
+            <p>${h.description || ""}</p>
+            <div style="margin-top:10px;">
+                <button onclick="editHouse('${h._id}', '${h.title}', '${h.location}', '${h.price}', '${h.bhk}', '${h.description}')" style="background: orange;">Edit</button>
+                <button onclick="deleteHouse('${h._id}')" style="background: red;">Delete</button>
             </div>
+        </div>
         `;
-        list.appendChild(card);
     });
 }
 
-/**
- * Fill form for editing
- */
+// 4. EDIT MODE
 function editHouse(id, title, location, price, bhk, description) {
     document.getElementById("houseId").value = id;
     document.getElementById("title").value = title;
@@ -95,40 +93,36 @@ function editHouse(id, title, location, price, bhk, description) {
     document.getElementById("price").value = price;
     document.getElementById("bhk").value = bhk;
     document.getElementById("description").value = description;
-    
-    // Scroll to form so user sees they are editing
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    document.getElementById("saveBtn").innerText = "Update House";
+    document.getElementById("cancelBtn").style.display = "inline-block";
+    window.scrollTo(0, 0);
 }
 
-/**
- * Delete a house
- */
+// 5. DELETE
 async function deleteHouse(id) {
-    if (!confirm("Are you sure you want to delete this listing?")) return;
+    if (!confirm("Are you sure you want to delete this house?")) return;
 
     try {
-        const res = await fetch(`${API}/delete-house/${id}`, { method: "DELETE" });
-        if (res.ok) {
-            alert("Deleted!");
-            loadHouses();
-        }
+        await fetch(`${API}/delete-house/${id}`, { method: "DELETE" });
+        loadHouses();
     } catch (err) {
-        console.error("Error deleting:", err);
+        console.error("Delete error:", err);
     }
 }
 
-/**
- * Reset form state
- */
+// 6. RESET
 function resetForm() {
     document.getElementById("houseId").value = "";
-    if (houseForm) {
-        houseForm.reset();
-    } else {
-        // Fallback if form ID isn't set
-        document.querySelectorAll("input, textarea").forEach(el => el.value = "");
-    }
+    document.getElementById("title").value = "";
+    document.getElementById("location").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("bhk").value = "";
+    document.getElementById("description").value = "";
+    
+    document.getElementById("saveBtn").innerText = "Save House";
+    document.getElementById("cancelBtn").style.display = "none";
 }
 
-// Initialize
+// Start app
 loadHouses();

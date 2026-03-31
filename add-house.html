@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Add House - CRUD</title>
-<link rel="stylesheet" href="add-house.css">
+    <meta charset="UTF-8">
+    <title>Add House - CRUD</title>
+    <link rel="stylesheet" href="add-house.css">
 </head>
-
 <body>
 
 <header>
@@ -13,32 +12,29 @@
     <p>Create • Update • Delete Houses</p>
 </header>
 
-<!-- Navigation -->
 <nav>
     <a href="index.html">Home</a>
     <a href="add-house.html">Add House</a>
     <a href="add-bhk.html">BHK Filter</a>
 </nav>
 
-<!-- Form Section -->
 <section class="container">
-
     <h2>Add / Update House</h2>
-
-    <!-- Hidden ID for update -->
+    
     <input type="hidden" id="houseId">
 
-    <input type="text" id="title" placeholder="House Title" required>
-    <input type="text" id="location" placeholder="Location" required>
-    <input type="number" id="price" placeholder="Price" required>
-
-    <textarea id="description" placeholder="Description"></textarea>
-
-    <button onclick="saveHouse()">Save House</button>
-
+    <div class="form-group">
+        <input type="text" id="title" placeholder="House Title" required>
+        <input type="text" id="location" placeholder="Location" required>
+        <input type="number" id="price" placeholder="Price (₹)" required>
+        <input type="text" id="bhk" placeholder="BHK (e.g. 2 BHK)" required>
+        <textarea id="description" placeholder="Description"></textarea>
+        
+        <button id="saveBtn" onclick="saveHouse()">Save House</button>
+        <button id="cancelBtn" onclick="resetForm()" style="background: gray; display:none;">Cancel Edit</button>
+    </div>
 </section>
 
-<!-- House List -->
 <section class="list-section">
     <h2>Available Houses</h2>
     <div id="house-list"></div>
@@ -48,8 +44,6 @@
     <p>📞 Contact: rent@homes.com | +91 9876543210</p>
 </footer>
 
-<!-- JS -->
 <script src="add-house.js"></script>
-
 </body>
 </html>

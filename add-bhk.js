@@ -3,29 +3,7 @@ const API = "https://house-rental-system-backend.onrender.com";
 const list = document.getElementById("house-list");
 const filter = document.getElementById("bhkFilter");
 
-// Demo houses (fallback)
-const demoHouses = [
-    {
-        title: "Modern Apartment",
-        location: "Bangalore",
-        price: 15000,
-        bhk: "2BHK",
-    },
-    {
-        title: "Family House",
-        location: "Mysore",
-        price: 10000,
-        bhk: "3BHK",
-    },
-    {
-        title: "Small Flat",
-        location: "Chennai",
-        price: 8000,
-        bhk: "1BHK",
-    }
-];
-
-// Normalize (fix space/case issues)
+// Normalize (fix space issue)
 function normalize(val) {
     return val ? val.replace(/\s/g, "").toLowerCase() : "";
 }
@@ -34,14 +12,7 @@ function normalize(val) {
 function loadHouses() {
     fetch(`${API}/houses`)
     .then(res => res.json())
-    .then(data => {
-        if (data.length === 0) {
-            displayHouses(demoHouses);
-        } else {
-            displayHouses(data);
-        }
-    })
-    .catch(() => displayHouses(demoHouses));
+    .then(data => displayHouses(data));
 }
 
 // Display houses
@@ -57,41 +28,30 @@ function displayHouses(houses) {
         list.innerHTML += `
         <div class="card">
             <h3>${h.title}</h3>
-            <p><b>Location:</b> ${h.location}</p>
-            <p><b>Price:</b> ₹${h.price}</p>
+            <p>${h.location}</p>
+            <p>₹${h.price}</p>
             <p><b>${h.bhk}</b></p>
         </div>
         `;
     });
 }
 
-// Filter logic
+// Filter
 filter.addEventListener("change", () => {
     fetch(`${API}/houses`)
     .then(res => res.json())
     .then(data => {
-        let houses = data.length === 0 ? demoHouses : data;
-
         if (filter.value === "") {
-            displayHouses(houses);
+            displayHouses(data);
         } else {
             const selected = normalize(filter.value);
 
-            const filtered = houses.filter(h => 
+            const filtered = data.filter(h =>
                 normalize(h.bhk) === selected
             );
 
             displayHouses(filtered);
         }
-    })
-    .catch(() => {
-        const selected = normalize(filter.value);
-
-        const filtered = filter.value === ""
-            ? demoHouses
-            : demoHouses.filter(h => normalize(h.bhk) === selected);
-
-        displayHouses(filtered);
     });
 });
 

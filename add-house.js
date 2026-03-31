@@ -1,73 +1,93 @@
 const API = "https://house-rental-system-backend.onrender.com";
-
 const list = document.getElementById("house-list");
+const houseForm = document.getElementById("house-form"); // Ensure your <form> has this ID
 
-// Save / Update
-function saveHouse() {
+/**
+ * Save or Update House
+ * @param {Event} e - The form submission event
+ */
+async function saveHouse(e) {
+    if (e) e.preventDefault(); // Prevents page reload
+
     const id = document.getElementById("houseId").value;
-
+    
+    // Gather data and ensure numbers are treated as numbers
     const house = {
-        title: document.getElementById("title").value,
-        location: document.getElementById("location").value,
-        price: document.getElementById("price").value,
-        bhk: document.getElementById("bhk").value,
-        description: document.getElementById("description").value,
+        title: document.getElementById("title").value.trim(),
+        location: document.getElementById("location").value.trim(),
+        price: Number(document.getElementById("price").value),
+        bhk: document.getElementById("bhk").value.trim(),
+        description: document.getElementById("description").value.trim(),
     };
 
-    if (id) {
-        // UPDATE
-        fetch(`${API}/update-house/${id}`, {
-            method: "PUT",
+    // Simple validation: don't send empty data
+    if (!house.title || !house.price) {
+        alert("Please fill in at least the Title and Price.");
+        return;
+    }
+
+    const url = id ? `${API}/update-house/${id}` : `${API}/add-house`;
+    const method = id ? "PUT" : "POST";
+
+    try {
+        const response = await fetch(url, {
+            method: method,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(house)
-        })
-        .then(() => {
-            alert("Updated!");
-            resetForm();
-            loadHouses();
         });
-    } else {
-        // CREATE
-        fetch(`${API}/add-house`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(house)
-        })
-        .then(() => {
-            alert("Added!");
-            resetForm();
-            loadHouses();
-        });
+
+        if (!response.ok) throw new Error("Network response was not ok");
+
+        alert(id ? "✅ House Updated!" : "✅ House Added!");
+        resetForm();
+        loadHouses();
+    } catch (error) {
+        console.error("Error saving house:", error);
+        alert("❌ Failed to save. Check console for details.");
     }
 }
 
-// Load houses
-function loadHouses() {
-    fetch(`${API}/houses`)
-    .then(res => res.json())
-    .then(data => displayHouses(data));
+/**
+ * Load all houses from API
+ */
+async function loadHouses() {
+    try {
+        const res = await fetch(`${API}/houses`);
+        const data = await res.json();
+        displayHouses(data);
+    } catch (err) {
+        console.error("Error loading houses:", err);
+    }
 }
 
-// Display with edit/delete
+/**
+ * Render houses to the DOM
+ */
 function displayHouses(houses) {
+    if (!list) return;
     list.innerHTML = "";
 
     houses.forEach(h => {
-        list.innerHTML += `
-        <div class="card">
+        // Use data attributes to make editing cleaner and safer
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
             <h3>${h.title}</h3>
-            <p>${h.location}</p>
-            <p>₹${h.price}</p>
-            <p>${h.bhk}</p>
-
-            <button onclick="editHouse('${h._id}', '${h.title}', '${h.location}', '${h.price}', '${h.bhk}', '${h.description}')">Edit</button>
-            <button onclick="deleteHouse('${h._id}')">Delete</button>
-        </div>
+            <p><strong>Location:</strong> ${h.location}</p>
+            <p><strong>Price:</strong> ₹${h.price}</p>
+            <p><strong>BHK:</strong> ${h.bhk}</p>
+            <div class="actions">
+                <button onclick="editHouse('${h._id}', '${h.title}', '${h.location}', '${h.price}', '${h.bhk}', '${h.description}')">Edit</button>
+                <button class="delete-btn" onclick="deleteHouse('${h._id}')">Delete</button>
+            </div>
         `;
+        list.appendChild(card);
     });
 }
 
-// Edit
+/**
+ * Fill form for editing
+ */
 function editHouse(id, title, location, price, bhk, description) {
     document.getElementById("houseId").value = id;
     document.getElementById("title").value = title;
@@ -75,24 +95,40 @@ function editHouse(id, title, location, price, bhk, description) {
     document.getElementById("price").value = price;
     document.getElementById("bhk").value = bhk;
     document.getElementById("description").value = description;
+    
+    // Scroll to form so user sees they are editing
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Delete
-function deleteHouse(id) {
-    fetch(`${API}/delete-house/${id}`, {
-        method: "DELETE"
-    })
-    .then(() => {
-        alert("Deleted!");
-        loadHouses();
-    });
+/**
+ * Delete a house
+ */
+async function deleteHouse(id) {
+    if (!confirm("Are you sure you want to delete this listing?")) return;
+
+    try {
+        const res = await fetch(`${API}/delete-house/${id}`, { method: "DELETE" });
+        if (res.ok) {
+            alert("Deleted!");
+            loadHouses();
+        }
+    } catch (err) {
+        console.error("Error deleting:", err);
+    }
 }
 
-// Reset form
+/**
+ * Reset form state
+ */
 function resetForm() {
     document.getElementById("houseId").value = "";
-    document.querySelector("form")?.reset();
+    if (houseForm) {
+        houseForm.reset();
+    } else {
+        // Fallback if form ID isn't set
+        document.querySelectorAll("input, textarea").forEach(el => el.value = "");
+    }
 }
 
-// Start
+// Initialize
 loadHouses();
